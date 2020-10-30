@@ -27,5 +27,14 @@ module.exports = (definition) => {
       Message: `Missing 'StartAt'|'Next'|'Default' target: ${state}`,
     }));
 
+  // check if the flow has atleast one end
+  const statesWithEnd = jp.query(definition, '$..[\'States\'][?(@.End == true)]');
+  if(statesWithEnd.length === 0) {
+    inexistant.push({
+      'Error code': 'MISSING_TRANSITION_TARGET',
+      Message: `Workflow has no terminal state`,
+    });
+  }
+
   return unreachable.concat(inexistant);
 };
